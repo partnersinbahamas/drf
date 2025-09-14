@@ -1,3 +1,13 @@
 from django.db import models
 
-# Create your models here.
+class Bus(models.Model):
+    info = models.CharField(max_length=255, null=True)
+    num_seats = models.IntegerField()
+
+    class Meta:
+        verbose_name_plural = "Buses"
+        verbose_name = "Bus"
+
+    def __str__(self):
+        return f"Bus {self.info} - ({self.id})"
+
