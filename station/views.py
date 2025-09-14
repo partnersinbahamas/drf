@@ -1,23 +1,46 @@
 from rest_framework.generics import get_object_or_404
-from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 from .models import Bus
 from .serializers import BusSerializer
 
 
+@api_view(['GET', 'POST'])
 def bus_list(request):
     if request.method == 'GET':
         buses = Bus.objects.all()
         buses_serializer = BusSerializer(buses, many=True)
 
-        return JsonResponse(buses_serializer.data, safe=False, status=200)
+        return Response(buses_serializer.data, status=status.HTTP_200_OK)
+    else:
+        buses_serializer = BusSerializer(data=request.data)
 
-    return None
+        if buses_serializer.is_valid():
+            buses_serializer.save()
+        else:
+            return Response(buses_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(buses_serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
 def bus_detail(request, pk):
+    bus = get_object_or_404(Bus, pk=pk)
+
     if request.method == 'GET':
-        bus = get_object_or_404(Bus, pk=pk)
         bus_serializer = BusSerializer(bus)
+        return Response(bus_serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        bus_serializer = BusSerializer(bus, data=request.data)
 
-        return JsonResponse(bus_serializer.data, status=200)
+        if bus_serializer.is_valid():
+            bus_serializer.save()
 
-    return None
+            return Response(bus_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(bus_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        bus.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
