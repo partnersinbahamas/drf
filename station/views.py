@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics, mixins
 from rest_framework.views import APIView
 
 from .models import Bus
@@ -100,3 +100,40 @@ class BusDetailView(APIView):
         bus.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+#
+class BusListAPIView(
+    generics.GenericAPIView,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin
+):
+    queryset = Bus.objects.all()
+    serializer_class = BusSerializer
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request: HttpRequest, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+# generic base api view
+class BusDetailAPIView(
+    generics.GenericAPIView,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+):
+    queryset = Bus.objects.all()
+    serializer_class = BusSerializer
+
+    def get(self, request: HttpRequest, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request: HttpRequest, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request: HttpRequest, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
