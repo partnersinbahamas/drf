@@ -3,7 +3,7 @@ from django.http import HttpRequest
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status, generics, mixins
+from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
 from .models import Bus
@@ -117,5 +117,25 @@ class BusListAPIView(generics.ListCreateAPIView):
 
 
 class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bus.objects.all()
+    serializer_class = BusSerializer
+
+
+# viewset base api view
+class BusListViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin
+):
+    queryset = Bus.objects.all()
+    serializer_class = BusSerializer
+
+
+class BusDetailViewSet(
+    viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin
+):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
