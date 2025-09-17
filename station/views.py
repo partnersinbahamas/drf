@@ -122,20 +122,6 @@ class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 
 # viewset base api view
-class BusListViewSet(
-    viewsets.GenericViewSet,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin
-):
-    queryset = Bus.objects.all()
-    serializer_class = BusSerializer
-
-
-class BusDetailViewSet(
-    viewsets.GenericViewSet,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin
-):
+class BusViewSet(viewsets.ModelViewSet):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
