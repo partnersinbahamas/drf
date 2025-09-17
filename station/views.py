@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from .models import Bus
 from .serializers import BusSerializer
 
+
 # function base api view
 @api_view(['GET', 'POST'])
 def bus_list(request):
@@ -26,6 +27,7 @@ def bus_list(request):
             return Response(buses_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(buses_serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET', 'PUT', 'DELETE'])
 def bus_detail(request, pk):
@@ -47,6 +49,7 @@ def bus_detail(request, pk):
         bus.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 # class base api view
 class BusListView(APIView):
     @staticmethod
@@ -63,6 +66,7 @@ class BusListView(APIView):
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class BusDetailView(APIView):
     @staticmethod
@@ -101,39 +105,13 @@ class BusDetailView(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#
-class BusListAPIView(
-    generics.GenericAPIView,
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin
-):
-    queryset = Bus.objects.all()
-    serializer_class = BusSerializer
-
-    def get(self, request: HttpRequest, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request: HttpRequest, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
 
 # generic base api view
-class BusDetailAPIView(
-    generics.GenericAPIView,
-    mixins.RetrieveModelMixin,
-    mixins.UpdateModelMixin,
-    mixins.DestroyModelMixin,
-):
+class BusListAPIView(generics.ListCreateAPIView):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
 
-    def get(self, request: HttpRequest, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
 
-    def put(self, request: HttpRequest, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
-    def patch(self, request: HttpRequest, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
-    def delete(self, request: HttpRequest, *args, **kwargs):
-        return self.destroy(request, *args, **kwargs)
+class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bus.objects.all()
+    serializer_class = BusSerializer
