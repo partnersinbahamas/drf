@@ -111,6 +111,10 @@ class BusListAPIView(generics.ListCreateAPIView):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
 
+    # use to add an additional login for a method. Starts with prefix perform_*
+    # def perform_create(self, serializer):
+    #     pass
+
 
 class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Bus.objects.all()
