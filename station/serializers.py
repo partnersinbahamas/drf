@@ -20,7 +20,10 @@ class BusModelSerializer(serializers.Serializer):
 
 
 class BusSerializer(serializers.ModelSerializer):
+    # do not set if you use __all__ in fields. Django understands it by his own
+    is_small = serializers.ReadOnlyField()
+
     class Meta:
         model = Bus
-        fields = ('id', 'info', 'num_seats')
+        fields = ('id', 'info', 'num_seats', 'is_small')
         read_only_fields = ('id', )
