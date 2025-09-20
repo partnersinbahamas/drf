@@ -1,27 +1,13 @@
-from django.urls import path
+from django.urls import path, include
 
 from .views import BusViewSet
+from rest_framework import routers
 
 app_name = 'station'
 
-bus_list_view = BusViewSet.as_view(actions={'get': 'list', 'post': 'create'})
-
-bus_detail_view = BusViewSet.as_view(actions={
-    'get': 'retrieve',
-    'put': 'update',
-    'patch': 'partial_update',
-    'delete': 'destroy'
-})
+router = routers.DefaultRouter()
+router.register('buses', BusViewSet, basename='buses')
 
 urlpatterns = [
-    path(
-        'buses/',
-        bus_list_view,
-        name='bus_list'
-    ),
-    path(
-        'buses/<int:pk>/',
-        bus_detail_view,
-        name='bus_detail'
-    ),
+    path('', include(router.urls))
 ]
