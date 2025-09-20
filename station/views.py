@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from django.http import HttpRequest
 
 from rest_framework.generics import get_object_or_404
@@ -6,8 +7,8 @@ from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
-from .models import Bus, Trip
-from .serializers import BusSerializer, TripSerializer, TripListSerializer
+from .models import Bus, Trip, Facility
+from .serializers import BusSerializer, TripSerializer, TripListSerializer, BusListSerializer
 
 
 # function base api view
@@ -123,16 +124,29 @@ class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
 # viewset base api view
 class BusViewSet(viewsets.ModelViewSet):
-    queryset = Bus.objects.all()
+    queryset = Bus.objects.all().prefetch_related('facilities')
     serializer_class = BusSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return BusListSerializer
+
+        return BusSerializer
 
 
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
-    serializer_class = TripListSerializer
+
+    _actions_list = ['list', 'retrieve']
+
+    def get_queryset(self):
+        if self.action in self._actions_list:
+            return self.queryset.select_related('bus')
+
+        return self.queryset
 
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action in self._actions_list:
             return TripListSerializer
 
         return TripSerializer

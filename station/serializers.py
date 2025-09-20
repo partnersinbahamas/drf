@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Bus, Trip
+from .models import Bus, Trip, Facility
+
 
 # default drf serializer
 class BusModelSerializer(serializers.Serializer):
@@ -18,6 +19,10 @@ class BusModelSerializer(serializers.Serializer):
 
         return instance
 
+class FacilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facility
+        fields = ('name', )
 
 class BusSerializer(serializers.ModelSerializer):
     # do not set if you use __all__ in fields. Django understands it by his own
@@ -25,8 +30,12 @@ class BusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bus
-        fields = ('id', 'info', 'num_seats', 'is_small')
+        fields = ('id', 'info', 'num_seats', 'facilities', 'is_small')
         read_only_fields = ('id', )
+
+
+class BusListSerializer(BusSerializer):
+    facilities = FacilitySerializer(many=True, read_only=True)
 
 
 class TripSerializer(serializers.ModelSerializer):
