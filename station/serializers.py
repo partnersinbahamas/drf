@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from .models import Bus
 
-class BusSerializer(serializers.Serializer):
+# default drf serializer
+class BusModelSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     info = serializers.CharField(required=False, max_length=255)
     num_seats = serializers.IntegerField(required=True)
@@ -16,3 +17,10 @@ class BusSerializer(serializers.Serializer):
         instance.save()
 
         return instance
+
+
+class BusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bus
+        fields = ('id', 'info', 'num_seats')
+        read_only_fields = ('id', )
