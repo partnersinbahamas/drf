@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 BASE_API_URL = "api/v1"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'{BASE_API_URL}/station/', include('station.urls', namespace='station')),
-]
+] + debug_toolbar_urls()
