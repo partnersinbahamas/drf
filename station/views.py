@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
-from .models import Bus
-from .serializers import BusSerializer
+from .models import Bus, Trip
+from .serializers import BusSerializer, TripSerializer, TripListSerializer
 
 
 # function base api view
@@ -125,3 +125,14 @@ class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class BusViewSet(viewsets.ModelViewSet):
     queryset = Bus.objects.all()
     serializer_class = BusSerializer
+
+
+class TripViewSet(viewsets.ModelViewSet):
+    queryset = Trip.objects.all()
+    serializer_class = TripListSerializer
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return TripListSerializer
+
+        return TripSerializer

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Bus
+from .models import Bus, Trip
 
 # default drf serializer
 class BusModelSerializer(serializers.Serializer):
@@ -27,3 +27,13 @@ class BusSerializer(serializers.ModelSerializer):
         model = Bus
         fields = ('id', 'info', 'num_seats', 'is_small')
         read_only_fields = ('id', )
+
+
+class TripSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = ('id', 'source', 'destination', 'departure', 'bus')
+
+
+class TripListSerializer(TripSerializer):
+    bus = BusSerializer()
