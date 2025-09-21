@@ -137,15 +137,16 @@ class BusViewSet(viewsets.ModelViewSet):
 
 
 class TripViewSet(viewsets.ModelViewSet):
-    queryset = Trip.objects.all()
+    queryset = (
+        Trip.objects
+            .select_related('bus')
+            .prefetch_related(
+                'tickets',
+                Prefetch('bus__facilities', queryset=Facility.objects.all())
+            )
+    )
 
     _actions_list = ['list', 'retrieve']
-
-    def get_queryset(self):
-        if self.action in self._actions_list:
-            return self.queryset.select_related('bus')
-
-        return self.queryset
 
     def get_serializer_class(self):
         if self.action in self._actions_list:
