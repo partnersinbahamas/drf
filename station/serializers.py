@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.relations import SlugRelatedField
 
 from .models import Bus, Trip, Facility
 
@@ -20,9 +21,10 @@ class BusModelSerializer(serializers.Serializer):
         return instance
 
 class FacilitySerializer(serializers.ModelSerializer):
+    buses = SlugRelatedField(many=True, read_only=True, slug_field='info')
     class Meta:
         model = Facility
-        fields = ('id', 'name', )
+        fields = ('id', 'name', 'buses')
 
 class BusSerializer(serializers.ModelSerializer):
     # do not set if you use __all__ in fields. Django understands it by his own
@@ -41,8 +43,9 @@ class BusListSerializer(BusSerializer):
 class TripSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
-        fields = ('id', 'source', 'destination', 'departure', 'bus')
+        fields = ('id', 'source', 'destination', 'departure', 'bus', 'tickets')
 
 
 class TripListSerializer(TripSerializer):
-    bus = BusSerializer()
+    bus = BusListSerializer()
+    tickets = serializers.ReadOnlyField(source='tickets.count')

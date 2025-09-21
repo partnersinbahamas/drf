@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 class Bus(models.Model):
     info = models.CharField(max_length=255, null=True)
     num_seats = models.IntegerField()
-    facilities = models.ManyToManyField("Facility")
+    facilities = models.ManyToManyField("Facility", related_name='buses')
 
     class Meta:
         verbose_name_plural = "Buses"
