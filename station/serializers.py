@@ -22,7 +22,7 @@ class BusModelSerializer(serializers.Serializer):
 class FacilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Facility
-        fields = ('name', )
+        fields = ('id', 'name', )
 
 class BusSerializer(serializers.ModelSerializer):
     # do not set if you use __all__ in fields. Django understands it by his own
@@ -35,7 +35,7 @@ class BusSerializer(serializers.ModelSerializer):
 
 
 class BusListSerializer(BusSerializer):
-    facilities = FacilitySerializer(many=True, read_only=True)
+    facilities = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
 
 
 class TripSerializer(serializers.ModelSerializer):

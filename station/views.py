@@ -8,7 +8,7 @@ from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
 from .models import Bus, Trip, Facility
-from .serializers import BusSerializer, TripSerializer, TripListSerializer, BusListSerializer
+from .serializers import BusSerializer, TripSerializer, TripListSerializer, BusListSerializer, FacilitySerializer
 
 
 # function base api view
@@ -127,8 +127,10 @@ class BusViewSet(viewsets.ModelViewSet):
     queryset = Bus.objects.all().prefetch_related('facilities')
     serializer_class = BusSerializer
 
+    _actions_list = ['list', 'retrieve']
+
     def get_serializer_class(self):
-        if self.action == 'list':
+        if self.action in self._actions_list:
             return BusListSerializer
 
         return BusSerializer
@@ -150,3 +152,8 @@ class TripViewSet(viewsets.ModelViewSet):
             return TripListSerializer
 
         return TripSerializer
+
+
+class FacilityViewSet(viewsets.ModelViewSet):
+    queryset = Facility.objects.all()
+    serializer_class = FacilitySerializer
