@@ -29,7 +29,9 @@ ALLOWED_HOSTS = []
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
+        "app.authentication.CsrfExemptSessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
         # или JWTAuthentication
     ]
 }
