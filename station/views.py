@@ -7,8 +7,9 @@ from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
-from .models import Bus, Trip, Facility
-from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, FacilitySerializer
+from .models import Bus, Trip, Facility, Order
+from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, \
+    FacilitySerializer, OrderSerializer
 
 
 # function base api view
@@ -158,3 +159,19 @@ class TripViewSet(viewsets.ModelViewSet):
 class FacilityViewSet(viewsets.ModelViewSet):
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        if self.request.user.is_authenticated:
+            return queryset.filter(user_id=self.request.user.id)
+        return queryset.none()
+
+
+    def perform_create(self, serializer):
+        return serializer.save(user_id=self.request.user.id)
