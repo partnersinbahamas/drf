@@ -8,7 +8,7 @@ from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
 from .models import Bus, Trip, Facility
-from .serializers import BusSerializer, TripSerializer, TripListSerializer, BusListSerializer, FacilitySerializer
+from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, FacilitySerializer
 
 
 # function base api view
@@ -146,11 +146,11 @@ class TripViewSet(viewsets.ModelViewSet):
             )
     )
 
-    _actions_list = ['list', 'retrieve']
-
     def get_serializer_class(self):
-        if self.action in self._actions_list:
+        if self.action == 'list':
             return TripListSerializer
+        elif self.action == 'retrieve':
+            return TripRetrieveSerializer
 
         return TripSerializer
 
