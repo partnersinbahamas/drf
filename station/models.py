@@ -78,7 +78,7 @@ class Order(models.Model):
 
 
 class Facility(models.Model):
-    name = models.CharField(max_length=85)
+    name = models.CharField(max_length=85, unique=True)
 
     class Meta:
         verbose_name_plural = "Facilities"
