@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Bus, Trip, Facility, Order, Ticket
 
@@ -65,6 +66,24 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ('id', 'seat', 'trip')
+        """
+        django support UniqueConstraint and unique_together from model constraints,
+        it create UniqueTogetherValidator automatically
+        """
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Ticket.objects.all(),
+                fields=('seat', 'trip')
+            )
+        ]
+
+    # custom serializer validation
+    def validate(self, attrs):
+        Ticket.validate_seat(
+            seat_num=attrs['seat'],
+            bus_num_seats=attrs['trip'].bus.num_seats,
+            exception_to_raise=serializers.ValidationError
+        )
 
 
 class OrderSerializer(serializers.ModelSerializer):
