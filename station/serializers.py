@@ -53,13 +53,29 @@ class TripSerializer(serializers.ModelSerializer):
 class TripListSerializer(TripSerializer):
     bus_info = serializers.ReadOnlyField(source='bus.info')
     bus_seats = serializers.ReadOnlyField(source='bus.num_seats')
+    taken_seats = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='seat',
+        source='tickets'
+    )
 
     class Meta(TripSerializer.Meta):
-        fields = ('id', 'source', 'destination', 'departure', 'tickets', 'bus_info', 'bus_seats')
+        fields = ('id', 'source', 'destination', 'departure', 'taken_seats', 'bus_info', 'bus_seats')
 
 
 class TripRetrieveSerializer(TripSerializer):
     bus = BusListSerializer()
+    taken_seats = serializers.SlugRelatedField(
+        many=True,
+        read_only=True,
+        slug_field='seat',
+        source='tickets'
+    )
+
+    class Meta(TripSerializer.Meta):
+        fields = TripSerializer.Meta.fields + ('taken_seats', )
+
 
 
 class TicketSerializer(serializers.ModelSerializer):
