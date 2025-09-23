@@ -50,13 +50,16 @@ class Ticket(models.Model):
             UniqueConstraint(fields=['seat', 'trip'], name='unique_seat_trip'),
         ]
 
+    @staticmethod
+    def validate_seat(seat_num: int, bus_num_seats: int, exception_to_raise) -> None:
+        if seat_num < 1:
+            raise exception_to_raise({"min_value": "Seat must be greater than 1."})
+
+        if seat_num > bus_num_seats:
+            raise exception_to_raise({"seat_range": "Seat must be in bus num_seats range."})
+
     def clean(self):
-        if self.seat < 1:
-            raise ValidationError("Seat must be greater than 1")
-
-        if self.seat > self.trip.bus.num_seats:
-            raise ValidationError("Seat must be in bus num_seats range.")
-
+        self.validate_seat(self.seat, self.trip.bus.num_seats, ValidationError)
 
     def save(self, *args, **kwargs):
         self.full_clean()
