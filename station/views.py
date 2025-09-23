@@ -130,6 +130,20 @@ class BusViewSet(viewsets.ModelViewSet):
 
     _actions_list = ['list', 'retrieve']
 
+    @staticmethod
+    def param_from_query(query_params: str | None):
+        return [int(param.strip()) for param in query_params.split(',')]
+
+    def get_queryset(self):
+        queryset = self.queryset
+        facilities_query = self.request.query_params.get('facilities', None)
+
+        if facilities_query:
+            facilities_params = self.param_from_query(facilities_query)
+            queryset = queryset.filter(facilities__in=facilities_params).distinct()
+
+        return queryset
+
     def get_serializer_class(self):
         if self.action in self._actions_list:
             return BusListSerializer
