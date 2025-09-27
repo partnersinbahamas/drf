@@ -93,6 +93,9 @@ class TicketSerializer(serializers.ModelSerializer):
             )
         ]
 
+class TicketRetrieveSerializer(TicketSerializer):
+    trip = TripListSerializer(read_only=True)
+
     # custom serializer validation
     def validate(self, attrs):
         Ticket.validate_seat(
@@ -100,6 +103,8 @@ class TicketSerializer(serializers.ModelSerializer):
             bus_num_seats=attrs['trip'].bus.num_seats,
             exception_to_raise=serializers.ValidationError
         )
+
+        return attrs
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -120,3 +125,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 Ticket.objects.create(order=order, **ticket)
 
             return order
+
+
+class OrderListSerializer(OrderSerializer):
+    tickets = TicketRetrieveSerializer(many=True, read_only=True, allow_empty=False)

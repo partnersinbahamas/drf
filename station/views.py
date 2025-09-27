@@ -7,9 +7,10 @@ from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
-from .models import Bus, Trip, Facility, Order
+from .models import Bus, Trip, Facility, Order, Ticket
+from .paginations import OrderListPagination
 from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, \
-    FacilitySerializer, OrderSerializer
+    FacilitySerializer, OrderSerializer, OrderListSerializer
 
 
 # function base api view
@@ -176,7 +177,15 @@ class FacilityViewSet(viewsets.ModelViewSet):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects
+    pagination_class = OrderListPagination
+    queryset = Order.objects.prefetch_related(
+        Prefetch('tickets',
+            queryset=Ticket.objects
+                 .select_related('trip__bus')
+                 .prefetch_related('trip__tickets')
+        )
+    )
+
     serializer_class = OrderSerializer
 
     def get_queryset(self):
@@ -185,6 +194,12 @@ class OrderViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             return queryset.filter(user_id=self.request.user.id)
         return queryset.none()
+
+    def get_serializer_class(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            return OrderListSerializer
+
+        return OrderSerializer
 
 
     def perform_create(self, serializer):
