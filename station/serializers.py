@@ -74,7 +74,7 @@ class TripRetrieveSerializer(TripSerializer):
     )
 
     class Meta(TripSerializer.Meta):
-        fields = TripSerializer.Meta.fields + ('taken_seats', )
+        fields = TripSerializer.Meta.fields + ('taken_seats', 'available_seats')
 
 
 

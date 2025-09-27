@@ -27,6 +27,12 @@ class Trip(models.Model):
     departure = models.DateTimeField()
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE, related_name="trips")
 
+    @property
+    def available_seats(self) -> list:
+        taken_seats = self.tickets.all().values_list('seat', flat=True)
+        seats = [seat for seat in range(1, self.bus.num_seats + 1) if seat not in taken_seats]
+        return seats
+
     def __str__(self):
         return f"Bus({self.bus.pk}) from {self.source} to {self.destination}."
 
