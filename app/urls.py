@@ -23,4 +23,5 @@ BASE_API_URL = "api/v1"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'{BASE_API_URL}/station/', include('station.urls', namespace='station')),
+    path(f'{BASE_API_URL}/user/', include('user.urls', namespace='user')),
 ] + debug_toolbar_urls()
