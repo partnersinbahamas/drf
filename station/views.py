@@ -8,6 +8,7 @@ from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 
 from .models import Bus, Trip, Facility, Order, Ticket
+from .permissions import IsAdminOrIsAuthenticated
 from .paginations import OrderListPagination
 from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, \
     FacilitySerializer, OrderSerializer, OrderListSerializer
@@ -174,6 +175,7 @@ class TripViewSet(viewsets.ModelViewSet):
 class FacilityViewSet(viewsets.ModelViewSet):
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
+    permission_classes = [IsAdminOrIsAuthenticated]
 
 
 class OrderViewSet(viewsets.ModelViewSet):
