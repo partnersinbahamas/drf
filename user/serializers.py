@@ -5,12 +5,13 @@ from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'password', 'is_staff', 'email')
+        fields = ('id', 'email', 'username', 'password', 'is_staff')
         read_only_fields = ('id', 'is_staff')
         # extra fields params
         extra_kwargs = {
             'password': {
                 'write_only': True,
+                "style": {"input_type": "password"},
             }
         }
 
