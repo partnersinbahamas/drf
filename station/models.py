@@ -2,12 +2,14 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import UniqueConstraint
 from rest_framework.exceptions import ValidationError
+from .utils import create_bus_image_path
 
 
 class Bus(models.Model):
     info = models.CharField(max_length=255, null=True)
     num_seats = models.IntegerField()
     facilities = models.ManyToManyField("Facility", related_name='buses')
+    image = models.ImageField(null=True, upload_to=create_bus_image_path)
 
     class Meta:
         verbose_name_plural = "Buses"
