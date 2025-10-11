@@ -3,15 +3,17 @@ from django.http import HttpRequest
 
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
+from rest_framework.decorators import action
 
 from .models import Bus, Trip, Facility, Order, Ticket
 from .permissions import IsAdminOrIsAuthenticated
 from .paginations import OrderListPagination
 from .serializers import BusSerializer, TripSerializer, TripListSerializer, TripRetrieveSerializer, BusListSerializer, \
-    FacilitySerializer, OrderSerializer, OrderListSerializer
+    FacilitySerializer, OrderSerializer, OrderListSerializer, BusImageSerializer
 
 
 # function base api view
@@ -136,6 +138,21 @@ class BusViewSet(viewsets.ModelViewSet):
     def param_from_query(query_params: str | None):
         return [int(param.strip()) for param in query_params.split(',')]
 
+    @action(
+        detail=True,
+        methods=["POST"],
+        url_path='upload-image',
+        permission_classes=[IsAdminUser]
+    )
+    def upload_image(self, request, pk=None):
+        bus = self.get_object()
+
+        serializer = self.get_serializer(bus, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def get_queryset(self):
         queryset = self.queryset
         facilities_query = self.request.query_params.get('facilities', None)
@@ -149,6 +166,9 @@ class BusViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in self._actions_list:
             return BusListSerializer
+
+        if self.action == 'upload_image':
+            return BusImageSerializer
 
         return BusSerializer
 

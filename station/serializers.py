@@ -22,6 +22,13 @@ class BusModelSerializer(serializers.Serializer):
 
         return instance
 
+
+class BusImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bus
+        fields = ("id", "image")
+
+
 class FacilitySerializer(serializers.ModelSerializer):
     buses = SlugRelatedField(many=True, read_only=True, slug_field='info')
     class Meta:
