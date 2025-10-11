@@ -175,7 +175,6 @@ class TripViewSet(viewsets.ModelViewSet):
 class FacilityViewSet(viewsets.ModelViewSet):
     queryset = Facility.objects.all()
     serializer_class = FacilitySerializer
-    permission_classes = [IsAdminOrIsAuthenticated]
 
 
 class OrderViewSet(viewsets.ModelViewSet):

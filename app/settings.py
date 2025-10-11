@@ -33,6 +33,9 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
         "rest_framework.authentication.BasicAuthentication",
         # или JWTAuthentication
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "station.permissions.IsAdminOrIsAuthenticated"
     ]
 }
 
