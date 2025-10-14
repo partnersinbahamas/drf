@@ -1,5 +1,6 @@
 from django.db.models import Prefetch
 from django.http import HttpRequest
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import api_view
@@ -137,6 +138,23 @@ class BusViewSet(viewsets.ModelViewSet):
     @staticmethod
     def param_from_query(query_params: str | None):
         return [int(param.strip()) for param in query_params.split(',')]
+
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='facilities',
+                type={'type': 'array', 'items': {'type': 'number'}},
+                description='Filter buses with list of facilities',
+                examples=[OpenApiExample('?facilities=1'), OpenApiExample('?facilities=1,2')]
+            )
+        ]
+    )
+    def list(self, request: HttpRequest, *args, **kwargs) -> Response:
+        """
+        Get list of buses
+        """
+        return super().list(request, *args, **kwargs)
 
     @action(
         detail=True,
