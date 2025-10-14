@@ -19,6 +19,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from debug_toolbar.toolbar import debug_toolbar_urls
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 BASE_API_URL = "api/v1"
 
@@ -26,4 +27,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(f'{BASE_API_URL}/station/', include('station.urls', namespace='station')),
     path(f'{BASE_API_URL}/user/', include('user.urls', namespace='user')),
+
+    path(f'{BASE_API_URL}/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path(f'{BASE_API_URL}/doc/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path(f'{BASE_API_URL}/doc/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ] + debug_toolbar_urls() + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

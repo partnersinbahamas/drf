@@ -36,7 +36,21 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "station.permissions.IsAdminOrIsAuthenticated"
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Bus station API',
+    'DESCRIPTION': 'API to manage bus stations',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'defaultModelRendering': True,
+        'defaultModelsExpandDepth': 2,
+        'defaultModelExpandDepth': 2
+    }
 }
 
 
@@ -51,6 +65,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     'rest_framework',
+    'drf_spectacular',
     'rest_framework.authtoken',
     'station',
     'user',
