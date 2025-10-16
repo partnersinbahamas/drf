@@ -10,6 +10,8 @@ from rest_framework import status, generics, mixins, viewsets
 from rest_framework.views import APIView
 from rest_framework.decorators import action
 
+from user.throttles import RoleBasedRateThrottle
+
 from .models import Bus, Trip, Facility, Order, Ticket
 from .permissions import IsAdminOrIsAuthenticated
 from .paginations import OrderListPagination
@@ -132,6 +134,8 @@ class BusDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 class BusViewSet(viewsets.ModelViewSet):
     queryset = Bus.objects.all().prefetch_related('facilities')
     serializer_class = BusSerializer
+
+    throttle_classes = [RoleBasedRateThrottle]
 
     _actions_list = ['list', 'retrieve']
 
