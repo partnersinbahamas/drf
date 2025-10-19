@@ -17,7 +17,6 @@ class ManageUserAPIView(generics.RetrieveUpdateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    authentication_classes = (authentication.TokenAuthentication,)
 
     def get_object(self):
         return self.request.user

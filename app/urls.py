@@ -28,6 +28,7 @@ urlpatterns = [
     path(f'{BASE_API_URL}/station/', include('station.urls', namespace='station')),
     path(f'{BASE_API_URL}/user/', include('user.urls', namespace='user')),
 
+    # drf-spectacular
     path(f'{BASE_API_URL}/schema/', SpectacularAPIView.as_view(), name='schema'),
     path(f'{BASE_API_URL}/doc/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path(f'{BASE_API_URL}/doc/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
