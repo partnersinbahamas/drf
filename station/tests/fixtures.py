@@ -1,6 +1,8 @@
 import pytest
 from django.contrib.auth import get_user_model
 
+from station.models import Facility
+
 
 @pytest.fixture()
 def get_user(db):
@@ -9,3 +11,11 @@ def get_user(db):
         password="user-password",
         email="user@example.com"
     )
+
+@pytest.fixture()
+def create_facility_wifi(db):
+    return Facility.objects.create(name="wifi")
+
+@pytest.fixture()
+def create_facility_wc(db):
+    return Facility.objects.create(name="wc")
