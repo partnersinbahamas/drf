@@ -6,7 +6,7 @@ from rest_framework.test import APIClient
 
 from station.models import Bus
 from station.serializers import BusListSerializer, BusSerializer
-from station.tests.fixtures import get_user, create_facility_wifi, create_facility_wc
+from station.tests.fixtures import get_user, get_admin, create_facility_wifi, create_facility_wc
 
 BUS_DETAIL_PK = 1
 
@@ -90,6 +90,22 @@ class TestPrivateBusViewsSet:
         assert response.data == bus_serializer.data
 
 
+    def test_create_bus_forbidden(self, get_user):
+        user = get_user
+        self.client.force_authenticate(user)
+
+        response = self.client.post(BUS_LIST_URL, {
+            "info": "AA 0101 CC",
+            "num_seats": 20,
+        })
+
+        error_detail = response.data["detail"]
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert error_detail == "You do not have permission to perform this action."
+        assert error_detail.code == "permission_denied"
+
+
     def test_bus_list_should_be_filtered_by_facilities(self, get_user, create_buses_with_facilities):
         """ buses should be filtered by facilities """
         buses = create_buses_with_facilities
@@ -107,6 +123,25 @@ class TestPrivateBusViewsSet:
         assert buses[1] not in response.data
 
 
+    def test_bus_should_be_created_by_admin(self, get_admin, create_facility_wifi):
+        admin = get_admin
+        wifi_facility = create_facility_wifi
+
+        self.client.force_authenticate(admin)
+
+        response = self.client.post(BUS_LIST_URL, {
+            "info": "AA 0101 CC",
+            "num_seats": 20,
+            "facilities": [wifi_facility.id]
+        })
+
+        bus = Bus.objects.get(id=response.data["id"])
+        bus_serializer = BusSerializer(bus)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data == bus_serializer.data
+
+
     # buses-detail
     def test_bus_detail_authenticated_user_has_access(self, get_user, create_buses_with_facilities):
         """ user has access """
@@ -119,5 +154,20 @@ class TestPrivateBusViewsSet:
         bus_detail = Bus.objects.get(pk=BUS_DETAIL_PK)
         bus_serializer = BusListSerializer(bus_detail)
 
-        # assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_200_OK
         assert response.data == bus_serializer.data
+
+
+    def test_bus_detail_update_forbidden(self, get_user, create_buses_with_facilities):
+        user = get_user
+        self.client.force_authenticate(user)
+
+        response = self.client.patch(BUS_DETAIL_URL, {
+            "info": "AA 0101 CC",
+        })
+
+        error_detail = response.data["detail"]
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert error_detail == "You do not have permission to perform this action."
+        assert error_detail.code == "permission_denied"
