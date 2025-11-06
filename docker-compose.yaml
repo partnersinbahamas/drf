@@ -9,6 +9,7 @@ services:
       - "8001:8000"
     volumes:
       - ./:/drf-app
+      - my_media:/files/media
     command: >
       sh -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
@@ -26,3 +27,4 @@ services:
 
 volumes:
   my_db:
+  my_media:

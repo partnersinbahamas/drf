@@ -48,7 +48,6 @@ class BusSerializer(serializers.ModelSerializer):
 class BusListSerializer(BusSerializer):
     facilities = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
 
-
 class TripSerializer(serializers.ModelSerializer):
     tickets = serializers.ReadOnlyField(source='tickets.count')
 
